@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        html{height:100%}
+        body { 
+            font: 13px Helvetica, Arial; 
+            height:100%
+        }
+        form {
+            padding: 3px;
+            position:relative  ;
+            bottom: 0; 
+            width: 100%; 
+        }
+        form input { 
+            border: 0; 
+            padding: 10px; 
+            width: calc(100% - 10%); 
+            margin-right: .5%; 
+        }
+        form button { 
+            width: 100%; 
+            background: rgb(130, 224, 255);
+            border: none; 
+            padding: 10px; float:right 
+        }
+        #messages { 
+            list-style-type: none; 
+            margin: 0; 
+            padding: 0; 
+            height:460px;
+            margin-bottom:02px; background:#f0f0f0;
+            width: calc(100% - 1px);
+            overflow-y: scroll;     
+        }
+
+        #main-container {
+            margin-top:30px;
+            border-radius:2px;
+            padding:0;
+            height:80%;
+            border:1px solid #ccc;
+
+        }
+
+        /*Speech bubbles*/
+
+
+
+        .bubble 
+        {
+        position: relative;
+        width: 320px;
+        height: 90px;
+        font-size:20px;
+        padding: 4px;
+        background: #FFFFFF;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        margin-left:10px;
+        margin-top:10px;
+        display:table;
+        float:left;
+        clear:both;
+        margin-bottom:6px;
+        }
+        .bubble:after 
+        {
+        content: '';
+        position: absolute;
+        border-style: solid;
+        border-width: 11px 6px 11px 0;
+        border-color: transparent #FFFFFF;
+        display: block;
+        width: 0;
+        z-index: 1;
+        margin-top: -11px;
+        left: -6px;
+        top: 22%;
+        }
+
+
+        .blue-bubble 
+        {
+        position: relative;
+
+        width: 230px;
+        max-width:300px;
+        
+        height: 120px;
+        font-size:20px;
+        padding: 5px;
+        background: #72C7FF;
+        margin-top:4px;
+        margin-right:20px;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        display:table;
+        float:right;
+        clear:both;
+        margin-bottom:5px;
+
+        }
+
+        .blue-bubble:after 
+        {
+        content: '';
+        position: absolute;
+        border-style: solid;
+        border-width: 15px 0 15px 16px;
+        border-color: transparent #72C7FF;
+        display: block;
+        width: 0;
+        z-index: 1;
+        right: -16px;
+        top: 43px;
+        }
+
+
+    </style>
+  </head>
+  <body>
+    <div class="container" id='main-container'>
+        <div id="messages"></div>
+        <form action="">
+           <div class="col-md-11">
+                <input id="m" class='form-control' autocomplete="off" />
+           </div>
+           <div class="col-md-1">
+               <button>Send</button>
+           </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var socket = io();
+      var last;
+      $('form').submit(function(){
+        socket.emit('chat message','{"message":"'+$('#m').val()+'"}');
+        last = $('#m').val();
+        return false;
+       
+      });
+      socket.on('chat message', function(msg){
+        if(last === msg.message){
+            $('#messages').append($('<li class="blue-bubble">').text(msg.message));
+        }else{
+             $('#messages').append($('<li class="bubble">').text(msg.message));
+        }
+        last = null;
+        $('#m').val("");
+        $("#messages").animate({ scrollTop: $("#messages").height() + "20000" + 'px'}, 'fast');
+      });
+     
+    </script>
+  </body>
+</html>
